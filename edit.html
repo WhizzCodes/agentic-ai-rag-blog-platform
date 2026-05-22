@@ -1,0 +1,206 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="signup">
+
+    <!-- <hr> -->
+    <h4>Add / Edit Blog Posts</h4>
+    <hr>
+
+    <!-- ================= AI GENERATION SECTION ================= -->
+    <h5>Generate Blog Using AI</h5>
+
+
+    <form
+        action="/upload-pdf/"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <input type="hidden" name="post_id" value="{{id}}">
+        <input
+            type="file"
+            name="pdf_file"
+            required
+        >
+
+        <button
+            type="submit"
+            class="registerbtn"
+        >
+            Upload PDF
+        </button>
+
+    </form>
+
+    <br>
+
+    <!-- ================= Uploaded PDF List ================= -->
+
+    <h5>Uploaded PDFs for RAG</h5>
+
+    {% if uploaded_pdfs %}
+
+        <ul>
+
+            {% for pdf in uploaded_pdfs %}
+
+                <li>
+
+                    📄 {{ pdf }}
+
+                    {% if active_pdf == pdf %}
+                        <!-- Active PDF -->
+                    {% endif %}
+
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>No PDF uploaded.</p>
+
+    {% endif %}
+
+    <hr>
+
+    <br>
+
+    <form action="/generate-blog-ai/" method="POST">
+        <div class="container">
+
+            <!-- Hidden post id for reframe -->
+            <input type="hidden" name="post_id" value="{{id}}">
+
+            <!-- <label><b>Enter Blog Topic</b></label> -->
+            <input
+                type="text"
+                name="topic"
+                placeholder="Enter topic like AI in Healthcare"
+                required
+            >
+
+            <br><br>
+
+            <!-- Normal AI Generate -->
+            <button type="submit" class="registerbtn">
+                Generate with AI
+            </button>
+
+            <!-- Research Agent Generate -->
+            <button
+                type="submit"
+                formaction="/research-blog-agent/"
+                formmethod="POST"
+                class="registerbtn"
+            >
+                Generate using Research Agent
+            </button>
+
+            <button
+                type="submit"
+                formaction="/google-blog-agent/"
+                formmethod="POST"
+                class="registerbtn"
+            >
+                Generate using Google Agent
+            </button>
+
+            {% if uploaded_pdfs %}
+
+            <button
+                type="submit"
+                formaction="/rag-blog-agent/"
+                formmethod="POST"
+                class="registerbtn"
+            >
+                Generate using RAG Agent
+            </button>
+
+            {% else %}
+
+            <button
+                type="button"
+                class="registerbtn"
+                disabled
+                style="background-color: gray; cursor: not-allowed;"
+            >
+                Upload PDF to Enable RAG
+            </button>
+
+            {% endif %}
+
+        </div>
+    </form>
+
+    <hr>
+
+    <!-- ================= MANUAL BLOG FORM ================= -->
+    <form action="/edit/{{id}}" method="POST">
+        <div class="container">
+
+            <!-- Hidden post id for reframe -->
+            <input type="hidden" name="post_id" value="{{id}}">
+
+            <!-- Title -->
+            <label for="title"><b>Title</b></label>
+            <input
+                type="text"
+                placeholder="Enter title"
+                value="{{ post.title if post else '' }}"
+                name="title"
+                id="title"
+                required
+            >
+
+            <!-- Slug -->
+            <label for="slug"><b>Slug</b></label>
+            <input
+                type="text"
+                placeholder="Enter slug"
+                value="{{ post.slug if post else '' }}"
+                name="slug"
+                id="slug"
+                required
+            >
+
+            <!-- Content -->
+            <label for="content"><b>Content</b></label>
+            <br>
+
+            <textarea
+                placeholder="Enter blog content"
+                rows="15"
+                cols="156"
+                name="content"
+                id="content"
+                required>{{post.content if post else ''}}</textarea>
+
+            <br><br>
+
+            <!-- Reframe Content Button -->
+            <button
+                type="submit"
+                formaction="/reframe-blog-ai/"
+                formmethod="POST"
+                class="registerbtn"
+            >
+                Reframe Content with AI
+            </button>
+
+            <br><br>
+
+            <!-- Save Blog Button -->
+            <button type="submit" class="registerbtn">
+                Save Blog
+            </button>
+
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}
